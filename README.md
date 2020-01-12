@@ -1,2 +1,5 @@
 # SignalServerr
-NodeJS Signal Server for WebRTC demo
+This is a demo Signal Server using Typescript , NodeJS , WebSocket 
+
+## Install
+
