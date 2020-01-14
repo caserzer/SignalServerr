@@ -1,4 +1,5 @@
-import { JsonObject, JsonProperty } from "json2typescript";
+import { JsonObject, JsonProperty, JsonConverter, JsonCustomConvert } from "json2typescript";
+import { SrcTypeConvert } from "./EnumConvert";
 
 /**
  * 消息来源
@@ -12,6 +13,19 @@ enum SrcType {
     Host = "host",
     Player = "player",
     Streamer = "streamer",
+}
+
+export function getEnumKeyByEnumValue(myEnum:any, enumValue:string) {
+    let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
+    return keys.length > 0 ? keys[0] : undefined;
+}
+
+
+
+enum CommandType{
+    HostConnect = "hostConnect",
+    HostDisconnect = "hostDisconnect",
+    SignalHostDisconnect = "signalHostDisconnect",
 }
 
 
@@ -42,7 +56,7 @@ abstract class CommandBase{
 @JsonObject("request")
 class CommandRequest extends CommandBase {
 
-    @JsonProperty("src", String)
+    @JsonProperty("src", SrcTypeConvert)
     src?: SrcType | null = undefined ;
 
 }

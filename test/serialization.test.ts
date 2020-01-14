@@ -1,5 +1,5 @@
-import { CommandRequest, CommandResponse, SrcType} from "../src/models/Command"
-
+import { CommandRequest, CommandResponse, SrcType, getEnumKeyByEnumValue} from "../src/models/Command"
+import { JsonConvert , OperationMode, ValueCheckingMode, Any} from "json2typescript";
 
 describe('Serialization & Deserialization Test', function () {
     
@@ -14,6 +14,30 @@ describe('Serialization & Deserialization Test', function () {
         expect(object.version).toBe(1.0);
         expect(object.command).toBe("hellotheworld");
     })
+
+    it("Deserialization CommandRequest", function(){
+        const jsonStr = '{"msgId":100, "command":"hellotheworld", "src":"host","version":1.0}';
+        let jsonObject = JSON.parse(jsonStr);
+        let jsonConvert : JsonConvert = new JsonConvert();
+        // jsonConvert.operationMode = OperationMode.LOGGING; // print some debug data
+        // jsonConvert.ignorePrimitiveChecks = false; // don't allow assigning number to string etc.
+        // jsonConvert.valueCheckingMode = ValueCheckingMode.ALLOW_NULL; //
+        let cmdReq : CommandRequest = jsonConvert.deserializeObject(jsonObject,CommandRequest);
+        expect(cmdReq.msgId).toBe(100);
+        expect(cmdReq.src).toEqual(SrcType.Host);
+        expect(cmdReq.version).toBe(1.0);
+        expect(cmdReq.command).toBe("hellotheworld");
+
+    })
+
+
+    it("just debugging tools", function(){
+
+        let x  = getEnumKeyByEnumValue(SrcType,"host");
+        let y = typeof SrcType.Host;
+        console.log(x,y);
+    })
+
 
 
 })
