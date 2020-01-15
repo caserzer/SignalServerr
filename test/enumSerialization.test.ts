@@ -18,11 +18,38 @@ describe('Enum Serialization Test', function () {
     })
 
     it('Deserialize SrcType', function () {
+        let json = '{ "src":"signal"}';
+        let jObject = JSON.parse(json);
+        let jsonConverter = new JsonConvert();
+        let typeObject : SrcTypeTest = jsonConverter.deserializeObject(jObject,SrcTypeTest);
+        expect(typeObject.src).toBe(SrcType.Signal);
+
+    })
+
+    it('Deserialize SrcType 1', function () {
         let json = '{ "src":"host"}';
         let jObject = JSON.parse(json);
         let jsonConverter = new JsonConvert();
         let typeObject : SrcTypeTest = jsonConverter.deserializeObject(jObject,SrcTypeTest);
         expect(typeObject.src).toBe(SrcType.Host);
+
+    })
+
+    it('Deserialize SrcType 2', function () {
+        let json = '{ "src":"player"}';
+        let jObject = JSON.parse(json);
+        let jsonConverter = new JsonConvert();
+        let typeObject : SrcTypeTest = jsonConverter.deserializeObject(jObject,SrcTypeTest);
+        expect(typeObject.src).toBe(SrcType.Player);
+
+    })
+
+    it('Deserialize SrcType 3', function () {
+        let json = '{ "src":"streamer"}';
+        let jObject = JSON.parse(json);
+        let jsonConverter = new JsonConvert();
+        let typeObject : SrcTypeTest = jsonConverter.deserializeObject(jObject,SrcTypeTest);
+        expect(typeObject.src).toBe(SrcType.Streamer);
 
     })
 
