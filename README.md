@@ -6,16 +6,17 @@ Streaming video using webrtc please see the example project @ https://github.com
 This demo project focus on the websockt message exchange for the SDP. 
 
 Actors involved in the project.
+
 | Actor  | Description |
 |--------|-------------|
-| Signal | Signal server which exchange the messages like SDP and other command message s. |
+| Signal | Signal server which exchange the messages like SDP and other command messages. |
 | Host   | Host instance which running at IPC edge gateway. Receiving streaming command from signal server, then start streaming application to stream video to the player.|
 |Streamer| Streamer application is the application actually streaming video to player using RTC peer connection. It need exchange SDP message with the player via signal server using websocket. |
 |Player  | web component which play video streaming from streamer. This component is based on @ https://github.com/webrtcHacks/adapter |
 | TURN Server | The TURN Server is a VoIP media traffic NAT traversal server and gateway.|
 
 
-## Main responsibilty
+## Main actor responsibilty
 ### Signal 
 
 
