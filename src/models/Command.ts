@@ -32,7 +32,7 @@ enum CommandType{
 /**
  * 消息基础类
  */
-abstract class CommandBase{
+class CommandBase{
 
     /**
      * 消息ID , Request / Response 需要保持一致 
@@ -69,4 +69,16 @@ class CommandResponse extends CommandBase {
 
 }
 
-export { CommandRequest, CommandResponse, SrcType};
+@JsonObject("hostConnectReq")
+class HostConnectRequest extends CommandRequest{
+
+    @JsonProperty("hostId",String)
+    HostId:string = "";
+
+    constructor(){
+        super();
+        this.command= "hostConnectReq";
+    }
+}
+
+export { CommandRequest, CommandResponse, SrcType,CommandBase,HostConnectRequest};
