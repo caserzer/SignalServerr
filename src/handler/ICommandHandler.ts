@@ -47,6 +47,8 @@ class CommandChain {
 
             ws.on("message", (message: string) => {
 
+                logger.debug(`received message:${message}`);
+                
                 try {
                     let jsonObj = JSON.parse(message);
                     let commandStr = jsonObj.command;
@@ -64,7 +66,7 @@ class CommandChain {
                     logger.error(e);
 
                 }
-                ws.send('message received.');
+                //ws.send('message received.');
 
             });
 
