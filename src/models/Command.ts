@@ -69,16 +69,6 @@ class CommandResponse extends CommandBase {
 
 }
 
-@JsonObject("hostConnectReq")
-class HostConnectRequest extends CommandRequest{
 
-    @JsonProperty("hostId",String)
-    HostId:string = "";
 
-    constructor(){
-        super();
-        this.command= "hostConnectReq";
-    }
-}
-
-export { CommandRequest, CommandResponse, SrcType,CommandBase,HostConnectRequest};
+export { CommandRequest, CommandResponse, SrcType,CommandBase};

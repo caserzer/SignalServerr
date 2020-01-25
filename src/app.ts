@@ -2,7 +2,9 @@ import express from 'express';
 import * as http from 'http';
 import * as WebSocket from 'ws';
 import logger from './util/logger';
-import { CommandChain, HostConnectHandler } from './handler/ICommandHandler';
+import { CommandChain } from './handler/ICommandHandler';
+import { HostConnectHandler } from './handler/HostConnectHandler';
+
 
 const app = express();
 
