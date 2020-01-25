@@ -1,5 +1,6 @@
 import { CommandRequest, SrcType } from "../src/models/Command"
 import { JsonConvert } from "json2typescript";
+import { HostConnectRequest } from "../src/handler/HostConnectHandler";
 
 describe('Serialization & Deserialization Test', function () {
 
@@ -49,14 +50,23 @@ describe('Serialization & Deserialization Test', function () {
 
     it("just debugging tools", function () {
 
-        try {
-            let x = JSON.parse("xkyj-=23");
-            console.log(x);
-        } catch (e) {
-            if (e instanceof SyntaxError) {
-                console.log(e);
-            }
-        }
+        // try {
+        //     let msg = '{"msgId":100, "command":"hostConnectReq","hostId1":"CLIENT1", "src":"host","version":1.0}';
+        //     let jsonObj = JSON.parse(msg);// test if the messge is json format
+        //     let commandStr = jsonObj.command; //test if the json object is CommandBase
+        //     if (commandStr === undefined) {
+        //         console.log("not found");
+        //     }
+        //     let commandType = HostConnectRequest;
+
+        //     // let commandType = this.commandMetaMap.get(commandStr); //get relative Type
+        //      let jsonConvert: JsonConvert = new JsonConvert(); //deserialize to the type
+        //      let commandObject = jsonConvert.deserializeObject(jsonObj, commandType);
+        // } catch (e) {
+        //     if (e instanceof SyntaxError) { //not json
+        //         console.log(e);
+        //     }
+        // }
 
     })
 

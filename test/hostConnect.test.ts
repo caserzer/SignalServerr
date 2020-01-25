@@ -6,7 +6,7 @@ import * as WebSocketN from 'ws';
 import { CommandChain } from '../src/handler/ICommandHandler';
 import { HostConnectHandler } from '../src/handler/HostConnectHandler';
 
-describe('HostConnect Command Test', function () {
+describe('HostConnect Command E2E Test', function () {
     const testServer = "ws://localhost:8080";
 
     const app = express();
@@ -17,26 +17,25 @@ describe('HostConnect Command Test', function () {
     const wss = new WebSocketN.Server({ server });
 
     beforeAll(done => {
-        console.log("before!!!!");
         const commandChain = new CommandChain(wss);
         commandChain.AddHandler(new HostConnectHandler());
-        //start our server
+        //start server
         server.listen(8080, () => {
             console.log("server start"); 
             done(); 
         });
     });
 
-    afterAll(() => {
-        console.log("after all");
-        // wss.close();
-        // server.close();
+    afterAll(done => {
+        server.close(()=>{
+            done();
+        });
     });
 
 
 
 
-    it('hahaha', done=> {
+    it('Simple Scenario 1', done=> {
         let client1 = new WebSocket(testServer);
         // client1.
         client1.on("open",()=>{

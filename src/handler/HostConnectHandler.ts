@@ -23,7 +23,7 @@ class HostConnectResponse extends CommandResponse {
 }
 
 class HostConnectHandler implements CommandHandler {
-    handle(connection: WebSocket, context: Context, command: CommandBase, rawString: string): boolean {
+    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean {
         if (command && command instanceof HostConnectRequest) {
             //handle host open command.
             connection.send("hello open command");
@@ -38,4 +38,4 @@ class HostConnectHandler implements CommandHandler {
 
 
 
-export { HostConnectHandler }
+export { HostConnectHandler, HostConnectRequest }

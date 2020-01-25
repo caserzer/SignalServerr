@@ -4,7 +4,7 @@
   "description": "This is a demo Signal Server using Typescript , NodeJS , WebSocket",
   "main": "app.js",
   "scripts": {
-    "test": "jest --forceExit --coverage --verbose",
+    "test": "node --expose-gc ./node_modules/.bin/jest --coverage --forceExit --verbose",
     "watch-test": "npm run test -- --watchAll"
   },
   "repository": {

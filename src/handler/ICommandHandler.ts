@@ -19,7 +19,7 @@ interface CommandHandler {
      * @param rawString raw string of the command
      * @returns true if the command chain need to continue
      */
-    handle(connection: WebSocket, context: Context, command: CommandBase, rawString: string): boolean;
+    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean;
 
     /**
      * 
@@ -38,6 +38,31 @@ class CommandChain {
 
     private commandMetaMap = new Map<string, typeof CommandBase>();
 
+    private GetCommand(msg: string): CommandBase | undefined {
+
+        try {
+            let jsonObj = JSON.parse(msg);// test if the messge is json format
+            let commandStr = jsonObj.command; //test if the json object is CommandBase
+            if (commandStr === undefined) {
+                return undefined; //do not have "command" property
+            }
+
+            let commandType = this.commandMetaMap.get(commandStr); //get relative Type
+            if (commandType) {
+                let jsonConvert: JsonConvert = new JsonConvert(); //deserialize to the type
+                return jsonConvert.deserializeObject(jsonObj, commandType);
+            }
+            return undefined;
+        } catch (e) {
+            if (e instanceof SyntaxError) {
+                //not json
+            } else {
+                logger.error(`failed to deserialize json.${(e as Error).message}`);
+            }
+            return undefined;
+        } 
+    }
+
     constructor(server: WebSocket.Server) {
         this.customerChain = [];
         server.on("connection", (ws: WebSocket) => {
@@ -48,29 +73,18 @@ class CommandChain {
             ws.on("message", (message: string) => {
 
                 logger.debug(`received message:${message}`);
-                
-                try {
-                    let jsonObj = JSON.parse(message);
-                    let commandStr = jsonObj.command;
-                    let commandType = this.commandMetaMap.get(commandStr);
-                    let jsonConvert: JsonConvert = new JsonConvert();
-                    let commandObject = jsonConvert.deserializeObject(jsonObj, commandType!);
-                    for (let x of this.customerChain) {
-                        let shouldContinue = x.handle(ws, new Context(), commandObject, message);
-                        if (!shouldContinue) {
-                            break;
-                        }
-                    }
-                } catch (e) {
-                    // console.log(e);
-                    logger.error(e);
 
+
+                let commandObject = this.GetCommand(message);
+                for (let x of this.customerChain) {
+                    let shouldContinue = x.handle(ws, new Context(), commandObject, message);
+                    if (!shouldContinue) {
+                        break;
+                    }
                 }
-                //ws.send('message received.');
+
 
             });
-
-
 
             ws.on("close", (code: number, reason: string) => {
 
