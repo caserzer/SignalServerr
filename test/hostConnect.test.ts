@@ -21,13 +21,13 @@ describe('HostConnect Command E2E Test', function () {
         commandChain.AddHandler(new HostConnectHandler());
         //start server
         server.listen(8080, () => {
-            console.log("server start"); 
-            done(); 
+            console.log("server start");
+            done();
         });
     });
 
     afterAll(done => {
-        server.close(()=>{
+        server.close(() => {
             done();
         });
     });
@@ -35,13 +35,13 @@ describe('HostConnect Command E2E Test', function () {
 
 
 
-    it('Simple Scenario 1', done=> {
+    it('Simple Scenario 1', done => {
         let client1 = new WebSocket(testServer);
         // client1.
-        client1.on("open",()=>{
+        client1.on("open", () => {
             client1.send('{"msgId":100, "command":"hostConnectReq","hostId":"CLIENT1", "src":"host","version":1.0}');
         });
-        client1.on("message",(msg: string) => {
+        client1.on("message", (msg: string) => {
             let jsonObj = JSON.parse(msg);
             expect(jsonObj.msgId).toBe(100);
             expect(jsonObj.command).toBe("hostConnectRsp");
@@ -49,6 +49,39 @@ describe('HostConnect Command E2E Test', function () {
             done();
         });
     }
-
     )
+
+    it('Duplicated HostID', done => {
+        let client1 = new WebSocket(testServer);
+        // client1.
+        client1.on("open", () => {
+            client1.send('{"msgId":100, "command":"hostConnectReq","hostId":"DUPLICATED", "src":"host","version":1.0}');
+        });
+        client1.on("message", (msg: string) => {
+            let jsonObj = JSON.parse(msg);
+            expect(jsonObj.msgId).toBe(100);
+            expect(jsonObj.command).toBe("hostConnectRsp");
+            expect(jsonObj.success).toBeTruthy();
+        });
+
+        let client2 = new WebSocket(testServer);
+        client2.on("open", () => {
+            client2.send('{"msgId":101, "command":"hostConnectReq","hostId":"DUPLICATED", "src":"host","version":1.0}');
+        });
+        client2.on("message", (msg: string) => {
+            let jsonObj = JSON.parse(msg);
+            expect(jsonObj.msgId).toBe(101);
+            expect(jsonObj.command).toBe("hostConnectRsp");
+            expect(jsonObj.success).toBeFalsy();
+        });
+        client2.on("close", (code: number, reason: string) => {
+            expect(code).toBe(1008);
+            done();
+        });
+
+
+    }
+    )
+
+
 })

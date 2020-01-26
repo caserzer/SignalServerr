@@ -60,38 +60,51 @@ class CommandChain {
                 logger.error(`failed to deserialize json.${(e as Error).message}`);
             }
             return undefined;
-        } 
+        }
     }
 
     constructor(server: WebSocket.Server) {
         this.customerChain = [];
         server.on("connection", (ws: WebSocket) => {
 
-            this.myMap.set(ws, "hellotheworld");
+            this.HandleConnectionOpen(ws);
 
 
             ws.on("message", (message: string) => {
-
-                logger.debug(`received message:${message}`);
-
-
-                let commandObject = this.GetCommand(message);
-                for (let x of this.customerChain) {
-                    let shouldContinue = x.handle(ws, new Context(), commandObject, message);
-                    if (!shouldContinue) {
-                        break;
-                    }
-                }
-
-
+                this.HandleMessage(ws,message);
             });
 
             ws.on("close", (code: number, reason: string) => {
-
-                logger.info(`is this correct? ${this.myMap.get(ws)}`);
-                logger.info(`connection closed. status:${ws.readyState} code:${code} reason:${reason}`);
+                this.HandleConnectionClose(ws, code, reason);
             });
         });
+    }
+
+    private HandleConnectionOpen(conn: WebSocket): void {
+        let context = new Context();
+        context.setWebSocket(conn);
+    }
+
+    private HandleMessage(conn: WebSocket, message: string): void {
+        logger.debug(`received message:${message}`);
+
+        let context = Context.getContext(conn);
+        if(!context){
+            logger.error("NEVER SHOULD ENTER THIS");
+            return;
+        }
+
+        let commandObject = this.GetCommand(message);
+        for (let x of this.customerChain) {
+            let shouldContinue = x.handle(conn, context, commandObject, message);
+            if (!shouldContinue) {
+                break;
+            }
+        }
+    }
+
+    private HandleConnectionClose(conn: WebSocket, code?: number, reason?: string): void {
+        logger.info(`connection closed. status:${conn.readyState} code:${code} reason:${reason}`);
     }
 
     public AddHandler(handler: CommandHandler): void {

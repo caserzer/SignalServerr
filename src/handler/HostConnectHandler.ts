@@ -6,43 +6,45 @@ import { JsonObject, JsonProperty } from "json2typescript";
 
 
 @JsonObject("hostConnectReq")
-class HostConnectRequest extends CommandRequest{
+class HostConnectRequest extends CommandRequest {
 
-    @JsonProperty("hostId",String)
-    HostId:string = "";
+    @JsonProperty("hostId", String)
+    HostId: string = "";
 
-    constructor(){
+    constructor() {
         super();
-        this.command= "hostConnectReq";
+        this.command = "hostConnectReq";
     }
 }
 
 @JsonObject("hostConnectRsp")
 class HostConnectResponse extends CommandResponse {
 
-    constructor(){
+    constructor() {
         super();
-        this.command= "hostConnectRsp";
+        this.command = "hostConnectRsp";
     }
-    
+
 }
 
 class HostConnectHandler implements CommandHandler {
-    
+
     handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean {
         if (command && command instanceof HostConnectRequest) {
             let hostId = command.HostId;
-            if(this.checkSameHostIdConnectionExist(hostId)){
+            if (this.checkSameHostIdConnectionExist(hostId)) {
                 //相同hostId,并且原来的链接是open 的状态，关闭当前连接
-                this.logSuspiciousConnection(connection,rawString);
-                let rsp = this.createResponse(command,false,"duplicated hostId");
+                this.logSuspiciousConnection(connection, rawString);
+                let rsp = this.createResponse(command, false, "duplicated hostId");
                 connection.send(JSON.stringify(rsp));
-                connection.close(1008,"duplicated hostId");
+                connection.close(1008, "duplicated hostId");
+                return false;
             }
-            
+
             //handle host open command.
-            let successRsp = this.createResponse(command,true);
+            let successRsp = this.createResponse(command, true);
             connection.send(JSON.stringify(successRsp));
+            context.setName(`HOST:${hostId}`);
             return false;
         }
         return true;
@@ -58,7 +60,11 @@ class HostConnectHandler implements CommandHandler {
      * @param hostId 
      * @returns true if same host id connection exist 
      */
-    checkSameHostIdConnectionExist(hostId:string):boolean{
+    checkSameHostIdConnectionExist(hostId: string): boolean {
+        let conn = Context.getNamedWebSocket(`HOST:${hostId}`);
+        if (conn && conn.readyState === WebSocket.OPEN) {
+            return true;
+        }
         return false;
     }
 
@@ -68,15 +74,15 @@ class HostConnectHandler implements CommandHandler {
      * @param hostId 
      * @returns true if host id 
      */
-    checkHostId(hostId:string):boolean{
+    checkHostId(hostId: string): boolean {
         return true;
     }
 
-    logSuspiciousConnection(connection:WebSocket, rawString:string):void{
+    logSuspiciousConnection(connection: WebSocket, rawString: string): void {
         //log remote ip , rawstring , datetime etc.
     }
 
-    createResponse(req:HostConnectRequest , success:boolean, result=""):HostConnectResponse{
+    createResponse(req: HostConnectRequest, success: boolean, result = ""): HostConnectResponse {
         let response = new HostConnectResponse();
         response.msgId = req.msgId;
         response.success = success;
