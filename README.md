@@ -73,20 +73,19 @@ In this demo project we choose request/response style to keep the simplicity. [J
 # Application protocols 
 ## Tables
 
-| No   | Name        | Description                                                  | Signal | Host | Player | Streamer | TURN |
-| ---- | ----------- | ------------------------------------------------------------ | ------ | ---- | ------ | -------- | ---- |
-| 1    | HostConnect | Host connecting to Signal, the host is ready to server streaming and other command. | X      | X    |        |          |      |
-| 2    |             |                                                              |        |      |        |          |      |
-| 3    |             |                                                              |        |      |        |          |      |
+| No   | Name          | Description                                                  | Signal | Host | Player | Streamer | TURN |
+| ---- | ------------- | ------------------------------------------------------------ | ------ | ---- | ------ | -------- | ---- |
+| 1    | HostConnect   | Host connecting to Signal, the host is ready to server streaming and other command. | X      | X    |        |          |      |
+| 2    | PlayerConnect | Player connect to Signal.                                    | X      |      | X      |          |      |
+| 3    |               |                                                              |        |      |        |          |      |
 
 
 ## HostConnect
 - Host should connect to the signal when the internet connection is available.
-- Only one connection should be kept with one hostId
-- PING / PONG on the connection every 5 senconds to check/keep the connection.
+- Only one connection should be kept with one hostId 
 
 Request Sample
-```
+```json
 {
     "msgId": 100,
     "src": "host",
@@ -96,7 +95,7 @@ Request Sample
 }
 ```
 Response Sample
-```
+```json
 {
     "msgId": 100,
     "src": "signal",
@@ -107,6 +106,30 @@ Response Sample
 }
 
 ```
+
+## PlayerConnect
+
+- Player send IPC's ID
+- Signal check IPC's ID , get IPC's host's ID, if the host is not online , Signal should close the connection
+- Signal return a channel's(streamer exchange SDP with Player) ID 
+- mutiply playerconnect with same IPC's ID is allowed.
+
+Requst Sample
+
+```json
+
+```
+
+Response Sample
+```json
+
+```
+
+
+
+
+
+PING / PONG on the connection every 5 senconds to check/keep the connection.
 
 # Misc. 
 ## Authentication
