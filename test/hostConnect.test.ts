@@ -42,8 +42,10 @@ describe('HostConnect Command E2E Test', function () {
             client1.send('{"msgId":100, "command":"hostConnectReq","hostId":"CLIENT1", "src":"host","version":1.0}');
         });
         client1.on("message",(msg: string) => {
-            
-            expect(msg).toBe("hello open command");
+            let jsonObj = JSON.parse(msg);
+            expect(jsonObj.msgId).toBe(100);
+            expect(jsonObj.command).toBe("hostConnectRsp");
+            expect(jsonObj.success).toBeTruthy();
             done();
         });
     }

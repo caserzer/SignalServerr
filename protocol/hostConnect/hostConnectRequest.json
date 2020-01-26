@@ -1,0 +1,7 @@
+{
+    "msgId": 100,
+    "src": "host",
+    "version": 1.0,
+    "command": "hostConnectReq",
+    "hostId": "CLIENT1"
+}

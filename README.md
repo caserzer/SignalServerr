@@ -80,7 +80,33 @@ In this demo project we choose request/response style to keep the simplicity. [J
 | 3    |             |                                                              |        |      |        |          |      |
 
 
+## HostConnect
+- Host should connect to the signal when the internet connection is available.
+- Only one connection should be kept with one hostId
+- PING / PONG on the connection every 5 senconds to check/keep the connection.
 
+Request Sample
+```
+{
+    "msgId": 100,
+    "src": "host",
+    "version": 1.0,
+    "command": "hostConnectReq",
+    "hostId": "CLIENT1"
+}
+```
+Response Sample
+```
+{
+    "msgId": 100,
+    "src": "signal",
+    "version": 1.0,
+    "command": "hostConnectRsp",
+    "success":true,
+    "result" : ""
+}
+
+```
 
 # Misc. 
 ## Authentication

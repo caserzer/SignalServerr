@@ -19,21 +19,71 @@ class HostConnectRequest extends CommandRequest{
 
 @JsonObject("hostConnectRsp")
 class HostConnectResponse extends CommandResponse {
+
+    constructor(){
+        super();
+        this.command= "hostConnectRsp";
+    }
     
 }
 
 class HostConnectHandler implements CommandHandler {
+    
     handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean {
         if (command && command instanceof HostConnectRequest) {
+            let hostId = command.HostId;
+            if(this.checkSameHostIdConnectionExist(hostId)){
+                //相同hostId,并且原来的链接是open 的状态，关闭当前连接
+                this.logSuspiciousConnection(connection,rawString);
+                let rsp = this.createResponse(command,false,"duplicated hostId");
+                connection.send(JSON.stringify(rsp));
+                connection.close(1008,"duplicated hostId");
+            }
+            
             //handle host open command.
-            connection.send("hello open command");
+            let successRsp = this.createResponse(command,true);
+            connection.send(JSON.stringify(successRsp));
             return false;
         }
         return true;
     }
+
     getCommandMeta(): [string, typeof CommandBase] {
         return ["hostConnectReq", HostConnectRequest];
     }
+
+
+    /**
+     * 检查相同hostId 的connection 是否存在
+     * @param hostId 
+     * @returns true if same host id connection exist 
+     */
+    checkSameHostIdConnectionExist(hostId:string):boolean{
+        return false;
+    }
+
+
+    /**
+     * 检查hostId 是否是合法的hostId 
+     * @param hostId 
+     * @returns true if host id 
+     */
+    checkHostId(hostId:string):boolean{
+        return true;
+    }
+
+    logSuspiciousConnection(connection:WebSocket, rawString:string):void{
+        //log remote ip , rawstring , datetime etc.
+    }
+
+    createResponse(req:HostConnectRequest , success:boolean, result=""):HostConnectResponse{
+        let response = new HostConnectResponse();
+        response.msgId = req.msgId;
+        response.success = success;
+        response.result = result;
+        return response;
+    }
+
 }
 
 

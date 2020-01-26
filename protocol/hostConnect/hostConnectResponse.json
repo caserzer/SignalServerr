@@ -1,0 +1,8 @@
+{
+    "msgId": 100,
+    "src": "signal",
+    "version": 1.0,
+    "command": "hostConnectRsp",
+    "success":true,
+    "result" : ""
+}

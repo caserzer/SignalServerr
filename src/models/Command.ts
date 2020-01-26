@@ -64,6 +64,9 @@ class CommandRequest extends CommandBase {
 @JsonObject("response")
 class CommandResponse extends CommandBase {
 
+    @JsonProperty("success",Boolean)
+    success: boolean = false;
+
     @JsonProperty("result", String, true)
     result?: string | null = undefined;
 
