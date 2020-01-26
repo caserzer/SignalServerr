@@ -15,19 +15,6 @@ enum SrcType {
     Streamer = "streamer",
 }
 
-export function getEnumKeyByEnumValue(myEnum:any, enumValue:string) {
-    let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
-    return keys.length > 0 ? keys[0] : undefined;
-}
-
-
-
-enum CommandType{
-    HostConnect = "hostConnect",
-    HostDisconnect = "hostDisconnect",
-    SignalHostDisconnect = "signalHostDisconnect",
-}
-
 
 /**
  * 消息基础类

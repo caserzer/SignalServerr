@@ -3,7 +3,7 @@ import { SrcType } from "./Command";
 
 
 @JsonConverter
-class EnumConverter<T> implements JsonCustomConvert<any> {
+export class EnumConverter<T> implements JsonCustomConvert<any> {
   enumType: {[key: string]: any};
 
   constructor(enumType: {[key: string]: any}) {

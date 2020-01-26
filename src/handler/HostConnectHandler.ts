@@ -9,7 +9,7 @@ import { JsonObject, JsonProperty } from "json2typescript";
 class HostConnectRequest extends CommandRequest {
 
     @JsonProperty("hostId", String)
-    HostId: string = "";
+    hostId: string = "";
 
     constructor() {
         super();
@@ -31,7 +31,7 @@ class HostConnectHandler implements CommandHandler {
 
     handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean {
         if (command && command instanceof HostConnectRequest) {
-            let hostId = command.HostId;
+            let hostId = command.hostId;
             if (this.checkSameHostIdConnectionExist(hostId)) {
                 //相同hostId,并且原来的链接是open 的状态，关闭当前连接
                 this.logSuspiciousConnection(connection, rawString);

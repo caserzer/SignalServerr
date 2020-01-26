@@ -73,14 +73,20 @@ In this demo project we choose request/response style to keep the simplicity. [J
 # Application protocols 
 ## Tables
 
-| No   | Name          | Description                                                  | Signal | Host | Player | Streamer | TURN |
-| ---- | ------------- | ------------------------------------------------------------ | ------ | ---- | ------ | -------- | ---- |
-| 1    | HostConnect   | Host connecting to Signal, the host is ready to server streaming and other command. | X      | X    |        |          |      |
-| 2    | PlayerConnect | Player connect to Signal.                                    | X      |      | X      |          |      |
-| 3    |               |                                                              |        |      |        |          |      |
+| No   | Name           | Description                                                  | Signal | Host | Player | Streamer | TURN |
+| ---- | -------------- | ------------------------------------------------------------ | ------ | ---- | ------ | -------- | ---- |
+| 1    | HostConnect    | Host connecting to Signal, the host is ready to server streaming and other command. | E      | S    |        |          |      |
+| 2    | Play           | Player connect to Signal, ask Signal to start stream one IPC | E      |      | S      |          |      |
+| 3    | StartStreaming | Signal ask host to start streaming IPC video                 | S      | E    |        |          |      |
 
+S: Caller
+
+E: Callee
+
+R: Relay
 
 ## HostConnect
+
 - Host should connect to the signal when the internet connection is available.
 - Only one connection should be kept with one hostId 
 
@@ -107,20 +113,45 @@ Response Sample
 
 ```
 
-## PlayerConnect
+## Play & StartStreaming
+Due to browser's websocket's [limitation](https://stackoverflow.com/questions/26003756/is-there-a-limit-practical-or-otherwise-to-the-number-of-web-sockets-a-page-op), the playerconnect and play command are combined into one.
 
-- Player send IPC's ID
+- Player send IPC's ID to Signal
+
 - Signal check IPC's ID , get IPC's host's ID, if the host is not online , Signal should close the connection
-- Signal return a channel's(streamer exchange SDP with Player) ID 
+
+- Signal return a streamChannel's(streamer exchange SDP with Player) ID. (RESPONSE 1)
+
+- Signal send StartStreaming to Host.
+
+- Host send response to signal.
+
+  - Success: true .  No further response will send to player.  (Streamer will start exchange the SDP with player on the connection.)
+
+  - Success: false. Signal will send response to player (RESPONSE 2) and close the connection.
+
+    
+
 - mutiply playerconnect with same IPC's ID is allowed.
 
-Requst Sample
+Play Request Sample
 
 ```json
 
 ```
 
-Response Sample
+Play Response Sample
+```json
+
+```
+
+StartStreaming Request Sample
+
+```json
+
+```
+
+StartStreaming Response Sample
 ```json
 
 ```
@@ -129,7 +160,7 @@ Response Sample
 
 
 
-PING / PONG on the connection every 5 senconds to check/keep the connection.
+PING / PONG on the connection every 5 seconds to check/keep the connection.
 
 # Misc. 
 ## Authentication
