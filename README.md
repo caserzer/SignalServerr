@@ -68,7 +68,7 @@ Applications can choose how to communicate on the web socket. Generally two comm
 2. Asynchronized messages exchange 
    Callers and callees exchange messages via typically "SEND" & "SUBSCRIBE" commands. Usually actors in the system can be labeled as clients and broker. [STOMP over websocket](http://jmesnil.net/stomp-websocket/doc/) is an option.
 
-In this demo project we choose request/response style to keep the simplicity. 
+In this demo project we choose request/response style to keep the simplicity. [JSON-RPC](https://www.jsonrpc.org/specification) and [RPC websocket](https://github.com/elpheria/rpc-websockets) is a good choice, but the implementation does good to the develpers to learn the technical details and not very complex, so we try it from "scratch". 
 
 # Application protocols 
 ## Tables
