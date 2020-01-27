@@ -6,6 +6,7 @@ import * as WebSocketN from 'ws';
 import { CommandChain } from '../src/handler/ICommandHandler';
 import { HostConnectHandler } from '../src/handler/HostConnectHandler';
 import { PlayHandler } from "../src/handler/PlayHandler";
+import waitForExpect from "wait-for-expect";
 
 describe('Play E2E Test', function () {
     const testServer = "ws://localhost:8080";
@@ -55,9 +56,10 @@ describe('Play E2E Test', function () {
     }
     )
 
-    it('STEP 1', done => {
+    it('STEP 1', async() => {
 
-        let streamChannel: string;
+        let streamChannelFromPlayer: string="1";
+        let streamChannelFromSignal: string="2";
         let messageNumber = 0;
         let hostClient = new WebSocket(testServer);
 
@@ -75,8 +77,7 @@ describe('Play E2E Test', function () {
             if (messageNumber === 1) {
                 expect(jsonObj.msgId).toBe(101);
                 expect(jsonObj.command).toBe("startStreamingReq");
-                //expect(jsonObj.streamChannel).toBe(streamChannel);
-                done();
+                streamChannelFromSignal = jsonObj.streamChannel;
             }
             messageNumber++;
         });
@@ -91,9 +92,13 @@ describe('Play E2E Test', function () {
             expect(jsonObj.msgId).toBe(101);
             expect(jsonObj.command).toBe("playRsp");
             expect(jsonObj.success).toBeTruthy();
-            streamChannel = jsonObj.streamChannel;
-            done();
+            streamChannelFromPlayer = jsonObj.streamChannel;
         });
+
+        await waitForExpect(() => {
+            expect(streamChannelFromPlayer).toEqual(streamChannelFromSignal);
+            console.log(streamChannelFromPlayer);
+          });
     }
     )
 

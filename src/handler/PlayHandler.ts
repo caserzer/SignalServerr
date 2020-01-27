@@ -123,7 +123,7 @@ class PlayHandler implements CommandHandler {
                 context.setName(`STREAM:${streamChannelId}`);
 
                 //get the playRespone and send to player 
-                let response = this.getPlayRespone(command, true)
+                let response = this.getPlayRespone(command, true,streamChannelId)
                 connection.send(JSON.stringify(response));
 
                 //send startStreamRequest to host
@@ -162,12 +162,13 @@ class PlayHandler implements CommandHandler {
         return undefined;
     }
 
-    getPlayRespone(command: PlayRequest, success: boolean, reason = ""): PlayResponse {
+    getPlayRespone(command: PlayRequest, success: boolean,streamChannel="", reason = ""): PlayResponse {
         let response = new PlayResponse();
         response.msgId = command.msgId;
         response.version = command.version;
         response.success = success;
         response.result = reason;
+        response.streamChannel = streamChannel;
         return response;
     }
 
