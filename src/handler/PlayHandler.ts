@@ -101,6 +101,9 @@ class StartStreamingRequest extends CommandRequest {
 @JsonObject("startStreamingRsp")
 class StartStreamingResponse extends CommandResponse {
 
+    @JsonProperty("streamChannel", String)
+    streamChannel: string = "";
+
     constructor() {
         super();
         this.command = "startStreamingRsp";
@@ -120,19 +123,16 @@ class PlayHandler implements CommandHandler {
                 let streamChannelId = Guid.raw();
 
                 //name the connection
-                context.setName(`STREAM:${streamChannelId}`);
+                context.setName(`STREAM PLAYER:${streamChannelId}`);
 
                 //get the playRespone and send to player 
-                let response = this.getPlayRespone(command, true,streamChannelId)
+                let response = this.getPlayRespone(command, true, streamChannelId)
                 connection.send(JSON.stringify(response));
 
                 //send startStreamRequest to host
                 let startStreamingRequest = this.getStartStreamingRequest(command, streamChannelId);
                 logger.debug(`send message:${JSON.stringify(startStreamingRequest)}`);
                 hostConn.send(JSON.stringify(startStreamingRequest));
-
-
-
 
             } else {
                 //send failed playResponse
@@ -162,7 +162,7 @@ class PlayHandler implements CommandHandler {
         return undefined;
     }
 
-    getPlayRespone(command: PlayRequest, success: boolean,streamChannel="", reason = ""): PlayResponse {
+    getPlayRespone(command: PlayRequest, success: boolean, streamChannel = "", reason = ""): PlayResponse {
         let response = new PlayResponse();
         response.msgId = command.msgId;
         response.version = command.version;
@@ -206,11 +206,38 @@ class PlayHandler implements CommandHandler {
 class StartStreamingHandler implements CommandHandler {
 
     handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean {
-        throw new Error("Method not implemented.");
+        if (command && command instanceof StartStreamingResponse) {
+            if (command.success) {
+                //host start streaming ok , do nothing , wait for streamer to connect
+            } else {
+                let streamChannel = command.streamChannel;
+                //notify the player and close player's connection
+                let playerConn = Context.getNamedWebSocket(`STREAM PLAYER:${streamChannel}`);
+                if (playerConn && playerConn.readyState === WebSocket.OPEN) {
+
+                    let playRsp = this.getPlayRespone(command, false, streamChannel, "host unable to server");
+                    playerConn.send(JSON.stringify(playRsp));
+                    playerConn.close(1008, "host unable to server");
+                }
+            }
+            return false;
+        }
+        return true;
     }
 
+    getPlayRespone(command: CommandBase, success: boolean, streamChannel = "", reason = ""): PlayResponse {
+        let response = new PlayResponse();
+        response.msgId = command.msgId;
+        response.version = command.version;
+        response.success = success;
+        response.result = reason;
+        response.streamChannel = streamChannel;
+        return response;
+    }
+
+
     getCommandMeta(): [string, typeof CommandBase] {
-        throw new Error("Method not implemented.");
+        return ["startStreamingRsp", StartStreamingResponse]
     }
 }
 
@@ -218,4 +245,4 @@ class StartStreamingHandler implements CommandHandler {
 
 
 
-export { PlayHandler, PlayRequest }
+export { PlayHandler, PlayRequest, StartStreamingHandler }
