@@ -1,0 +1,7 @@
+{
+    "msgId": 101,
+    "command": "streamReq",
+    "streamChannel": "6c7ad0ac-c614-6d9b-e54c-b63af55c03cb",
+    "src": "streamer",
+    "version": 1.0
+}

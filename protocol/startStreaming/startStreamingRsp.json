@@ -1,0 +1,8 @@
+{
+    "msgId": 101,
+    "version": 1,
+    "command": "startStreamingRsp",
+    "success": true,
+    "result": "",
+    "streamChannel": "5efa5be7-b5df-ebeb-88c4-da03567f25be"
+}

@@ -1,0 +1,10 @@
+{
+    "msgId": 101,
+    "command": "playReq",
+    "src": "player",
+    "version": 1.0,
+    "ipc": "HOST1-ipcxxxx",
+    "encoding": "vp8",
+    "channel": 0,
+    "duration": 60
+}

@@ -73,11 +73,13 @@ In this demo project we choose request/response style to keep the simplicity. [J
 # Application protocols 
 ## Tables
 
-| No   | Name           | Description                                                  | Signal | Host | Player | Streamer | TURN |
-| ---- | -------------- | ------------------------------------------------------------ | ------ | ---- | ------ | -------- | ---- |
-| 1    | HostConnect    | Host connecting to Signal, the host is ready to server streaming and other command. | E      | S    |        |          |      |
-| 2    | Play           | Player connect to Signal, ask Signal to start stream one IPC | E      |      | S      |          |      |
-| 3    | StartStreaming | Signal ask host to start streaming IPC video                 | S      | E    |        |          |      |
+| No   | Name           | Description                                                  | Signal  | Host | Player  | Streamer | TURN |
+| ---- | -------------- | ------------------------------------------------------------ | ------- | ---- | ------- | -------- | ---- |
+| 1    | HostConnect    | Host connecting to Signal, the host is ready to server streaming and other command. | E       | S    |         |          |      |
+| 2    | Play           | Player connect to Signal, ask Signal to start stream one IPC | E       |      | S       |          |      |
+| 3    | StartStreaming | Signal ask host to start streaming IPC video                 | S       | E    |         |          |      |
+| 4    | Streaming      | Streamer start to streaming video.                           | E       |      | S       |          |      |
+| 5    | SDP exchange   | Stream & player exchange SDP & ICE message                   | R<br/>R |      | E<br/>S | S<br/>E  |      |
 
 S: Caller
 
@@ -137,28 +139,81 @@ Due to browser's websocket's [limitation](https://stackoverflow.com/questions/26
 Play Request Sample
 
 ```json
-
+{
+    "msgId": 101,
+    "command": "playReq",
+    "src": "player",
+    "version": 1.0,
+    "ipc": "HOST1-ipcxxxx",
+    "encoding": "vp8",
+    "channel": 0,
+    "duration": 60
+}
 ```
 
 Play Response Sample
 ```json
-
+{
+    "msgId": 101,
+    "version": 1,
+    "command": "playRsp",
+    "success": true,
+    "result": "",
+    "streamChannel": "5efa5be7-b5df-ebeb-88c4-da03567f25be"
+}
 ```
 
 StartStreaming Request Sample
 
 ```json
-
+{
+    "msgId": 101,
+    "version": 1,
+    "command": "startStreamingReq",
+    "src": "signal",
+    "rtspAddress": "rtsp://xxxx",
+    "userName": "dummyUser",
+    "password": "dummyPassword",
+    "rtspEncoding": "h264",
+    "encoding": "vp8",
+    "channel": 0,
+    "duration": 60,
+    "turnServer": "turn://",
+    "turnUser": "turnUser",
+    "turnPassword": "turnPassword",
+    "streamChannel": "319f7928-ebf5-e4f5-00ba-4d44adb1ce4f"
+}
 ```
 
 StartStreaming Response Sample
 ```json
-
+{
+    "msgId": 101,
+    "version": 1,
+    "command": "startStreamingRsp",
+    "success": true,
+    "result": "",
+    "streamChannel": "5efa5be7-b5df-ebeb-88c4-da03567f25be"
+}
 ```
 
+## Streaming
+- Streamer get streamChannle from host, then use the streamChannel to start exchange the SDP and ICE information
+- Signal will check the streamChannel , if not correct or player's conntection has been disconnected.
+- If signal pass the streamer's streamChannel, signal will NOT send response to streamer and player. Any message in/out on the two connections will be SDP / ICE messages.
+- once the streamer connected to the signal. The streamer and player 's connection are consider as one pair. Any one lost the connection to the signal , signal will close the other one. Once the connection is closed , streamer and the player should stop stream.
 
+```json
+{
+    "msgId": 101,
+    "command": "streamReq",
+    "streamChannel": "6c7ad0ac-c614-6d9b-e54c-b63af55c03cb",
+    "src": "streamer",
+    "version": 1.0
+}
+```
 
-
+## other
 
 PING / PONG on the connection every 5 seconds to check/keep the connection.
 

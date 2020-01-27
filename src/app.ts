@@ -4,6 +4,8 @@ import * as WebSocket from 'ws';
 import logger from './util/logger';
 import { CommandChain } from './handler/ICommandHandler';
 import { HostConnectHandler } from './handler/HostConnectHandler';
+import { PlayHandler, StartStreamingHandler } from './handler/PlayHandler';
+import { StreamHandler, SDPHandler } from './handler/StreamHandler';
 
 const app = express();
 
@@ -16,7 +18,10 @@ const wss = new WebSocket.Server({ server });
 
 const commandChain = new CommandChain(wss);
 commandChain.AddHandler(new HostConnectHandler());
-
+commandChain.AddHandler(new PlayHandler());
+commandChain.AddHandler(new StartStreamingHandler());
+commandChain.AddHandler(new StreamHandler());
+commandChain.AddHandler(new SDPHandler());
 
 //start our server
 server.listen(8080, () => {

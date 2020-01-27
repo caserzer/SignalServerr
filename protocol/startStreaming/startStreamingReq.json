@@ -1,0 +1,17 @@
+{
+    "msgId": 101,
+    "version": 1,
+    "command": "startStreamingReq",
+    "src": "signal",
+    "rtspAddress": "rtsp://xxxx",
+    "userName": "dummyUser",
+    "password": "dummyPassword",
+    "rtspEncoding": "h264",
+    "encoding": "vp8",
+    "channel": 0,
+    "duration": 60,
+    "turnServer": "turn://",
+    "turnUser": "turnUser",
+    "turnPassword": "turnPassword",
+    "streamChannel": "319f7928-ebf5-e4f5-00ba-4d44adb1ce4f"
+}

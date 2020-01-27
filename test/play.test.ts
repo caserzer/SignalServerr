@@ -9,7 +9,7 @@ import { PlayHandler, StartStreamingHandler } from "../src/handler/PlayHandler";
 import waitForExpect from "wait-for-expect";
 
 describe('Play E2E Test', function () {
-    const testServer = "ws://localhost:8080";
+    const testServer = "ws://localhost:8082";
 
     const app = express();
 
@@ -24,7 +24,7 @@ describe('Play E2E Test', function () {
         commandChain.AddHandler(new PlayHandler());
         commandChain.AddHandler(new StartStreamingHandler());
         //start server
-        server.listen(8080, () => {
+        server.listen(8082, () => {
             console.log("server start");
             done();
         });
@@ -68,7 +68,9 @@ describe('Play E2E Test', function () {
             hostClient.send('{"msgId":100, "command":"hostConnectReq","hostId":"HOST1", "src":"host","version":1.0}');
         });
         hostClient.on("message", (msg: string) => {
+            console.log(msg);
             let jsonObj = JSON.parse(msg);
+
 
             if (messageNumber === 0) {
                 expect(jsonObj.msgId).toBe(100);
@@ -142,6 +144,7 @@ describe('Play E2E Test', function () {
         });
         player.on("message", (msg: string) => {
             let jsonObj = JSON.parse(msg);
+            console.log(msg);
             if (playerMessageReceivedCount === 0) {
                 expect(jsonObj.msgId).toBe(101);
                 expect(jsonObj.command).toBe("playRsp");

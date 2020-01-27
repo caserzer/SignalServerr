@@ -83,5 +83,35 @@ describe('HostConnect Command E2E Test', function () {
     }
     )
 
+    it('Host connect disconnect connect', done => {
+
+        let client1 = new WebSocket(testServer);
+        client1.on("open", () => {
+            client1.send('{"msgId":100, "command":"hostConnectReq","hostId":"HOSTCDC", "src":"host","version":1.0}');
+        });
+        client1.on("message", (msg: string) => {
+            let jsonObj = JSON.parse(msg);
+            expect(jsonObj.msgId).toBe(100);
+            expect(jsonObj.command).toBe("hostConnectRsp");
+            expect(jsonObj.success).toBeTruthy();
+            client1.close();
+
+            let client2 = new WebSocket(testServer);
+            client2.on("open", () => {
+                client2.send('{"msgId":101, "command":"hostConnectReq","hostId":"HOSTCDC", "src":"host","version":1.0}');
+            });
+            client2.on("message", (msg: string) => {
+                let jsonObj = JSON.parse(msg);
+                expect(jsonObj.msgId).toBe(101);
+                expect(jsonObj.command).toBe("hostConnectRsp");
+                expect(jsonObj.success).toBeTruthy();
+                done();
+            });
+    
+        });
+        
+    }
+    )
+
 
 })
