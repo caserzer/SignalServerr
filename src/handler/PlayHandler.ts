@@ -215,9 +215,9 @@ class StartStreamingHandler implements CommandHandler {
                 let playerConn = Context.getNamedWebSocket(`STREAM PLAYER:${streamChannel}`);
                 if (playerConn && playerConn.readyState === WebSocket.OPEN) {
 
-                    let playRsp = this.getPlayRespone(command, false, streamChannel, "host unable to server");
+                    let playRsp = this.getPlayRespone(command, false, streamChannel, "host unable to serve streaming");
                     playerConn.send(JSON.stringify(playRsp));
-                    playerConn.close(1008, "host unable to server");
+                    playerConn.close(1008, "host unable to serve streaming");
                 }
             }
             return false;

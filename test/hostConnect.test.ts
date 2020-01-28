@@ -107,9 +107,9 @@ describe('HostConnect Command E2E Test', function () {
                 expect(jsonObj.success).toBeTruthy();
                 done();
             });
-    
+
         });
-        
+
     }
     )
 

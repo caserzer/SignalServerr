@@ -256,3 +256,9 @@ PING / PONG on the connection every 5 seconds to check/keep the connection.
 
 ## Install
 
+- npm install
+
+Run Test
+
+- npm run test
+

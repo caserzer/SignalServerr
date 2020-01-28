@@ -9,7 +9,7 @@ import { PlayHandler, StartStreamingHandler } from "../src/handler/PlayHandler";
 import { StreamHandler, SDPHandler } from "../src/handler/StreamHandler";
 
 import waitForExpect from "wait-for-expect";
-import { stream } from 'winston';
+
 
 describe('STREAM E2E Test', function () {
     const testServer = "ws://localhost:8081";
@@ -63,7 +63,7 @@ describe('STREAM E2E Test', function () {
 
         hostClient.on("open", () => {
             hostClient.send('{"msgId":100, "command":"hostConnectReq","hostId":"HOST1", "src":"host","version":1.0}');
-        }); 
+        });
         hostClient.on("message", (msg: string) => {
             let jsonObj = JSON.parse(msg);
 
@@ -79,17 +79,17 @@ describe('STREAM E2E Test', function () {
                 hostClient.send(`{"msgId":101, "command":"startStreamingRsp","streamChannel":"${streamChannelFromSignal}","version":1.0,"success":true,"reason":""}`);
 
                 let streamerClient = new WebSocket(testServer);
-                streamerClient.on("open",()=>{
+                streamerClient.on("open", () => {
                     streamerClient.send(`{"msgId":101, "command":"streamReq","streamChannel":"${streamChannelFromSignal}", "src":"streamer","version":1.0}`)
                     streamerClient.send("streamerMessage1");
                     streamerClient.send("streamerMessage2");
                 });
 
-                streamerClient.on("message" , (streamerMsg:string)=>{
-                    if(streamerMessageCount==0){
+                streamerClient.on("message", (streamerMsg: string) => {
+                    if (streamerMessageCount == 0) {
                         expect(streamerMsg).toBe("playerMessage1");
                     }
-                    if(streamerMessageCount==1){
+                    if (streamerMessageCount == 1) {
                         expect(streamerMsg).toBe("playerMessage2");
                         streamerClient.close();
                     }

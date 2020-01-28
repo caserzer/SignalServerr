@@ -86,7 +86,7 @@ class CommandChain {
     }
 
     private HandleMessage(conn: WebSocket, message: string): void {
-        logger.debug(`received message:${message}`);
+        logger.debug(`received message. context name:${ Context.getContext(conn)?.getName()} . message:${message}`);
 
         let context = Context.getContext(conn);
         if(!context){
@@ -104,7 +104,7 @@ class CommandChain {
     }
 
     private HandleConnectionClose(conn: WebSocket, code?: number, reason?: string): void {
-        logger.info(`connection closed. status:${conn.readyState} code:${code} reason:${reason}`);
+        logger.info(`connection closed. context name:${Context.getContext(conn)?.getName()} status:${conn.readyState} code:${code} reason:${reason}`);
     }
 
     public AddHandler(handler: CommandHandler): void {
