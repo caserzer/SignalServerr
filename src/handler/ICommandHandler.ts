@@ -103,11 +103,11 @@ class CommandChain {
 
         this.interval = setInterval(function ping() {
             server.clients.forEach(function each(ws) {
-
-                ws.ping((error: Error) => {
-                    logger.error('got error when ping', error);
-                    ws.terminate();
-                });
+                try {
+                    ws.ping();
+                } catch (e) {
+                    logger.error('error when ping', e);
+                }
 
             });
         }, 15000);
