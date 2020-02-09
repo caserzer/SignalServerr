@@ -63,6 +63,7 @@ class CommandChain {
         }
     }
 
+    private interval: NodeJS.Timeout;
     constructor(server: WebSocket.Server) {
         this.customerChain = [];
         server.on("connection", (ws: WebSocket) => {
@@ -77,7 +78,31 @@ class CommandChain {
             ws.on("close", (code: number, reason: string) => {
                 this.HandleConnectionClose(ws, code, reason);
             });
+
+            ws.on("pong",()=>{
+                let context = Context.getContext(ws);
+                if(context){
+                    logger.debug(`received pong on context name:${ context.getName()}`)
+                }else{
+                    logger.debug('recevied pong.')
+                }
+            });
+
+            ws.on("ping",()=>{
+                let context = Context.getContext(ws);
+                if(context){
+                    logger.debug(`received ping on context name:${ context.getName()}`)
+                }else{
+                    logger.debug('recevied ping.')
+                }
+            });
         });
+
+        this.interval = setInterval(function ping() {
+            server.clients.forEach(function each(ws) {
+              ws.ping();
+            });
+          }, 15000);
     }
 
     private HandleConnectionOpen(conn: WebSocket): void {
@@ -96,9 +121,13 @@ class CommandChain {
 
         let commandObject = this.GetCommand(message);
         for (let x of this.customerChain) {
-            let shouldContinue = x.handle(conn, context, commandObject, message);
-            if (!shouldContinue) {
-                break;
+            try {
+                let shouldContinue = x.handle(conn, context, commandObject, message);
+                if (!shouldContinue) {
+                    break;
+                }
+            } catch (e) {
+                logger.error('HandleMessage ERROR:', e)
             }
         }
     }

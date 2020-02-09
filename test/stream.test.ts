@@ -6,7 +6,7 @@ import * as WebSocketN from 'ws';
 import { CommandChain } from '../src/handler/ICommandHandler';
 import { HostConnectHandler } from '../src/handler/HostConnectHandler';
 import { PlayHandler, StartStreamingHandler } from "../src/handler/PlayHandler";
-import { StreamHandler, SDPHandler } from "../src/handler/StreamHandler";
+import { StreamHandler, SDPHandler, UnRecognizedCommandHandler } from "../src/handler/StreamHandler";
 
 import waitForExpect from "wait-for-expect";
 
@@ -28,6 +28,8 @@ describe('STREAM E2E Test', function () {
         commandChain.AddHandler(new StartStreamingHandler());
         commandChain.AddHandler(new StreamHandler());
         commandChain.AddHandler(new SDPHandler());
+        commandChain.AddHandler(new UnRecognizedCommandHandler());
+
         //start server
         server.listen(8081, () => {
             console.log("server start");
@@ -130,11 +132,22 @@ describe('STREAM E2E Test', function () {
             playerConnectionClosed = true;
         });
 
+        let attackClient = new WebSocket(testServer);
+        let attackConnectionClosed = false;
+        attackClient.on("open", () => {
+            attackClient.send("xxxYYYzzz");
+        });
+
+        attackClient.on("close",() =>{
+            attackConnectionClosed = true;
+        });
+
         await waitForExpect(() => {
             expect(streamChannelFromPlayer).toEqual(streamChannelFromSignal);
             expect(playerConnectionClosed).toBeTruthy();
             expect(streamerMessageCount).toBe(2);
             expect(playerMessageReceivedCount).toBe(3);
+            expect(attackConnectionClosed).toBeTruthy();
         });
     }
     )
