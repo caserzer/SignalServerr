@@ -65,6 +65,9 @@ class CommandChain {
 
     private interval: NodeJS.Timeout;
     constructor(server: WebSocket.Server) {
+
+        Context.setServer(server);
+        
         this.customerChain = [];
         server.on("connection", (ws: WebSocket) => {
 

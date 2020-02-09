@@ -6,6 +6,7 @@ import { CommandChain } from './handler/ICommandHandler';
 import { HostConnectHandler } from './handler/HostConnectHandler';
 import { PlayHandler, StartStreamingHandler } from './handler/PlayHandler';
 import { StreamHandler, SDPHandler, UnRecognizedCommandHandler } from './handler/StreamHandler';
+import * as statisticController  from './controller/StatisticController';
 
 const app = express();
 
@@ -22,8 +23,12 @@ commandChain.AddHandler(new StreamHandler());
 commandChain.AddHandler(new SDPHandler());
 commandChain.AddHandler(new UnRecognizedCommandHandler());
 
+app.get('/statistic/conns', statisticController.getConnections)
+
 //start our server
 server.listen(8080, () => {
   //console.log("server start");  
   logger.info("server start");
 });
+
+

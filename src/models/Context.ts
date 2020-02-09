@@ -7,6 +7,11 @@ class Context {
 
     private name ? : string;
 
+    private connectedTime : Date = new Date();
+
+    public getConnectedTime() : Date{
+        return this.connectedTime;
+    }
 
     weakRefWebSocket:any ;
 
@@ -53,6 +58,16 @@ class Context {
 
     public static getContext(conn: WebSocket) : Context | undefined {
         return Context.webSocketMap.get(conn);
+    }
+
+    private static server : WebSocket.Server;
+
+    public static setServer(server:WebSocket.Server):void{
+        this.server = server;
+    }
+
+    public static getServer(): WebSocket.Server{
+        return this.server;
     }
 
 }
