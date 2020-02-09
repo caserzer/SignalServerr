@@ -67,7 +67,7 @@ class CommandChain {
     constructor(server: WebSocket.Server) {
 
         Context.setServer(server);
-        
+
         this.customerChain = [];
         server.on("connection", (ws: WebSocket) => {
 
@@ -75,27 +75,27 @@ class CommandChain {
 
 
             ws.on("message", (message: string) => {
-                this.HandleMessage(ws,message);
+                this.HandleMessage(ws, message);
             });
 
             ws.on("close", (code: number, reason: string) => {
                 this.HandleConnectionClose(ws, code, reason);
             });
 
-            ws.on("pong",()=>{
+            ws.on("pong", () => {
                 let context = Context.getContext(ws);
-                if(context){
-                    logger.debug(`received pong on context name:${ context.getName()}`)
-                }else{
+                if (context) {
+                    logger.debug(`received pong on context name:${context.getName()}`)
+                } else {
                     logger.debug('recevied pong.')
                 }
             });
 
-            ws.on("ping",()=>{
+            ws.on("ping", () => {
                 let context = Context.getContext(ws);
-                if(context){
-                    logger.debug(`received ping on context name:${ context.getName()}`)
-                }else{
+                if (context) {
+                    logger.debug(`received ping on context name:${context.getName()}`)
+                } else {
                     logger.debug('recevied ping.')
                 }
             });
@@ -103,9 +103,14 @@ class CommandChain {
 
         this.interval = setInterval(function ping() {
             server.clients.forEach(function each(ws) {
-              ws.ping();
+
+                ws.ping((error: Error) => {
+                    logger.error('got error when ping', error);
+                    ws.terminate();
+                });
+
             });
-          }, 15000);
+        }, 15000);
     }
 
     private HandleConnectionOpen(conn: WebSocket): void {
@@ -114,10 +119,10 @@ class CommandChain {
     }
 
     private HandleMessage(conn: WebSocket, message: string): void {
-        logger.debug(`received message. context name:${ Context.getContext(conn)?.getName()} . message:${message}`);
+        logger.debug(`received message. context name:${Context.getContext(conn)?.getName()} . message:${message}`);
 
         let context = Context.getContext(conn);
-        if(!context){
+        if (!context) {
             logger.error("NEVER SHOULD ENTER THIS");
             return;
         }
