@@ -183,6 +183,7 @@ class PlayHandler implements CommandHandler {
             } else { //read from sqldatabase
                 try {
                     let rtsp = await this.getRtspInfo(ipc, channel);
+                    context.setName(`STREAM PLAYER:${streamChannelId}`);
                     let hostConn = Context.getNamedWebSocket(`HOST:${rtsp.hostId}`);
                     if (hostConn) {
                         if (hostConn.readyState !== WebSocket.OPEN) {
