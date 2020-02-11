@@ -29,7 +29,7 @@ class HostConnectResponse extends CommandResponse {
 
 class HostConnectHandler implements CommandHandler {
 
-    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean {
+    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): Promise<boolean> {
         if (command && command instanceof HostConnectRequest) {
             let hostId = command.hostId;
             if (this.checkSameHostIdConnectionExist(hostId)) {
@@ -38,16 +38,16 @@ class HostConnectHandler implements CommandHandler {
                 let rsp = this.createResponse(command, false, "duplicated hostId");
                 connection.send(JSON.stringify(rsp));
                 connection.close(1008, "duplicated hostId");
-                return false;
+                return new Promise((resolve) => { resolve(false); });;
             }
 
             //handle host open command.
             let successRsp = this.createResponse(command, true);
             connection.send(JSON.stringify(successRsp));
             context.setName(`HOST:${hostId}`);
-            return false;
+            return new Promise((resolve) => { resolve(false); });;
         }
-        return true;
+        return new Promise((resolve) => { resolve(true); });;
     }
 
     getCommandMeta(): [string, typeof CommandBase] {

@@ -6,7 +6,8 @@ import * as WebSocketN from 'ws';
 import { CommandChain } from '../src/handler/ICommandHandler';
 import { HostConnectHandler } from '../src/handler/HostConnectHandler';
 import { PlayHandler, StartStreamingHandler } from "../src/handler/PlayHandler";
-import { StreamHandler, SDPHandler, UnRecognizedCommandHandler } from "../src/handler/StreamHandler";
+import { StreamHandler, SDPHandler } from "../src/handler/StreamHandler";
+import { UnRecognizedCommandHandler} from "../src/handler/UnRecognizedCommandHandler"
 
 import waitForExpect from "wait-for-expect";
 

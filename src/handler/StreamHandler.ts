@@ -31,7 +31,7 @@ class StreamResponse extends CommandResponse {
 
 class StreamHandler implements CommandHandler {
 
-    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean {
+    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): Promise<boolean> {
         if (command && command instanceof StreamRequest) {
             let streamChannel = command.streamChannel;
 
@@ -68,10 +68,12 @@ class StreamHandler implements CommandHandler {
                 connection.close(1008, "invalid streamChannel");
             }
 
-            return false;
+            return new Promise((resolve) => { resolve(false); });
+
         }
 
-        return true;
+        return new Promise((resolve) => { resolve(true); });
+
     }
 
     getResponse(command: StreamRequest, reason = ''): StreamResponse {
@@ -91,7 +93,7 @@ class StreamHandler implements CommandHandler {
 
 class SDPHandler implements CommandHandler {
 
-    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean {
+    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): Promise<boolean> {
         if (context.getName()?.includes("STREAM")) {
             let name = context.getName()
             let pairedConn = this.getPairedConnection(name!);
@@ -99,9 +101,9 @@ class SDPHandler implements CommandHandler {
                 pairedConn.send(rawString);
                 logger.debug(`REPLAY message to paired connection from named connection:${name}.message:${rawString}`);
             }
-            return false;
+            return new Promise((resolve) => { resolve(false); });
         }
-        return true;
+        return new Promise((resolve) => { resolve(true); });
     }
 
     getCommandMeta(): [string, typeof CommandBase] {
@@ -124,20 +126,8 @@ class SDPHandler implements CommandHandler {
 
 }
 
-class UnRecognizedCommandHandler implements CommandHandler {
-    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean {
-        logger.error(`received unrecognized command. command text:${rawString}. close connection.`);
-        connection.terminate();
-        return true;
-    }
-
-    getCommandMeta(): [string, typeof CommandBase] {
-        return ["THIS will never happen", CommandBase];
-    }
-
-
-}
 
 
 
-export { StreamHandler, SDPHandler , UnRecognizedCommandHandler}
+
+export { StreamHandler, SDPHandler }

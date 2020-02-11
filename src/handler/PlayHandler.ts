@@ -114,7 +114,7 @@ class StartStreamingResponse extends CommandResponse {
 class PlayHandler implements CommandHandler {
 
 
-    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean {
+    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): Promise<boolean> {
         if (command && command instanceof PlayRequest) {
 
             let ipc = command.ipc;
@@ -141,9 +141,9 @@ class PlayHandler implements CommandHandler {
                 connection.send(JSON.stringify(failedResponse));
                 connection.close(1008, "invalid ipc id or gateway is not online");
             }
-            return false;
+            return new Promise((resolve) => { resolve(false); });
         }
-        return true;
+        return new Promise((resolve) => { resolve(true); });
     }
 
     getHostConnection(ipc: string): WebSocket | undefined {
@@ -205,7 +205,7 @@ class PlayHandler implements CommandHandler {
 
 class StartStreamingHandler implements CommandHandler {
 
-    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean {
+    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): Promise<boolean> {
         if (command && command instanceof StartStreamingResponse) {
             if (command.success) {
                 //host start streaming ok , do nothing , wait for streamer to connect
@@ -220,9 +220,9 @@ class StartStreamingHandler implements CommandHandler {
                     playerConn.close(1008, "host unable to serve streaming");
                 }
             }
-            return false;
+            return new Promise((resolve) => { resolve(false); });
         }
-        return true;
+        return new Promise((resolve) => { resolve(true); });
     }
 
     getPlayRespone(command: CommandBase, success: boolean, streamChannel = "", reason = ""): PlayResponse {

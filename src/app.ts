@@ -1,12 +1,14 @@
 import express from 'express';
 import * as http from 'http';
 import * as WebSocket from 'ws';
-import logger from './util/logger';
-import { CommandChain } from './handler/ICommandHandler';
+import * as statisticController from './controller/StatisticController';
 import { HostConnectHandler } from './handler/HostConnectHandler';
+import { CommandChain } from './handler/ICommandHandler';
 import { PlayHandler, StartStreamingHandler } from './handler/PlayHandler';
-import { StreamHandler, SDPHandler, UnRecognizedCommandHandler } from './handler/StreamHandler';
-import * as statisticController  from './controller/StatisticController';
+import { SDPHandler, StreamHandler } from './handler/StreamHandler';
+import { UnRecognizedCommandHandler } from "./handler/UnRecognizedCommandHandler";
+import logger from './util/logger';
+
 
 const app = express();
 

@@ -19,7 +19,7 @@ interface CommandHandler {
      * @param rawString raw string of the command
      * @returns true if the command chain need to continue
      */
-    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): boolean;
+    handle(connection: WebSocket, context: Context, command: CommandBase | undefined, rawString: string): Promise<boolean>;
 
     /**
      * 
@@ -119,26 +119,34 @@ class CommandChain {
     }
 
     private HandleMessage(conn: WebSocket, message: string): void {
-        logger.debug(`received message. context name:${Context.getContext(conn)?.getName()} . message:${message}`);
 
-        let context = Context.getContext(conn);
-        if (!context) {
-            logger.error("NEVER SHOULD ENTER THIS");
-            return;
-        }
+        let asyncFunc = async () => {
+            logger.debug(`received message. context name:${Context.getContext(conn)?.getName()} . message:${message}`);
+            let commandObject = this.GetCommand(message);
 
-        let commandObject = this.GetCommand(message);
-        for (let x of this.customerChain) {
-            try {
-                let shouldContinue = x.handle(conn, context, commandObject, message);
-                if (!shouldContinue) {
-                    break;
-                }
-            } catch (e) {
-                logger.error('HandleMessage ERROR:', e)
+            let context = Context.getContext(conn);
+            if (!context) {
+                logger.error("NEVER SHOULD ENTER THIS");
+                return;
             }
+            for (let x of this.customerChain) {
+                try {
+
+                    let shouldContinue = await x.handle(conn, context!, commandObject, message);
+                    if (!shouldContinue) {
+                        break;
+                    }
+                } catch (e) {
+                    logger.error('HandleMessage ERROR:', e)
+                }
+            }
+
         }
+        asyncFunc();
+
+
     }
+
 
     private HandleConnectionClose(conn: WebSocket, code?: number, reason?: string): void {
         logger.info(`connection closed. context name:${Context.getContext(conn)?.getName()} status:${conn.readyState} code:${code} reason:${reason}`);
