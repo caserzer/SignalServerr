@@ -1,11 +1,10 @@
-import { Context } from "../models/Context";
-import { CommandBase, CommandRequest, CommandResponse } from "../models/Command";
-import WebSocket = require("ws");
-import { CommandHandler } from "./ICommandHandler";
-import { JsonObject, JsonProperty } from "json2typescript";
-import logger from "../util/logger";
 import { Guid } from "guid-typescript";
-
+import { JsonObject, JsonProperty } from "json2typescript";
+import { CommandBase, CommandRequest, CommandResponse } from "../models/Command";
+import { Context } from "../models/Context";
+import logger from "../util/logger";
+import { CommandHandler } from "./ICommandHandler";
+import WebSocket = require("ws");
 
 @JsonObject("streamReq")
 class StreamRequest extends CommandRequest {
@@ -130,4 +129,5 @@ class SDPHandler implements CommandHandler {
 
 
 
-export { StreamHandler, SDPHandler }
+export { StreamHandler, SDPHandler };
+

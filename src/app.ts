@@ -8,11 +8,14 @@ import { PlayHandler, StartStreamingHandler } from './handler/PlayHandler';
 import { SDPHandler, StreamHandler } from './handler/StreamHandler';
 import { UnRecognizedCommandHandler } from "./handler/UnRecognizedCommandHandler";
 import logger from './util/logger';
+import { APP_PORT } from './util/secrets';
 
 
 const app = express();
 
 const server = http.createServer(app);
+
+const appPort = APP_PORT;
 
 //initialize the WebSocket server instance
 const wss = new WebSocket.Server({ server });
@@ -28,8 +31,7 @@ commandChain.AddHandler(new UnRecognizedCommandHandler());
 app.get('/statistic/conns', statisticController.getConnections)
 
 //start our server
-server.listen(8080, () => {
-  //console.log("server start");  
+server.listen(Number.parseInt(appPort!), () => {
   logger.info("server start");
 });
 
