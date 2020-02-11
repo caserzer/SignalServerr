@@ -192,6 +192,9 @@ class PlayHandler implements CommandHandler {
                         logger.debug(`send message:${JSON.stringify(startStreamingRequest)}`);
                         hostConn.send(JSON.stringify(startStreamingRequest));
 
+                        let response = this.getPlayRespone(command, true, streamChannelId)
+                        connection.send(JSON.stringify(response));
+
                     } else {
                         this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online");
                     }
