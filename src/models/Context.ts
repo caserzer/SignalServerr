@@ -13,6 +13,8 @@ class Context {
         return this.connectedTime;
     }
 
+    public Alive: boolean = true;
+
     weakRefWebSocket:any ;
 
     private static namedContext : Map<string, Context> = new Map<string,Context>();

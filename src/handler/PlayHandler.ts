@@ -177,7 +177,7 @@ class PlayHandler implements CommandHandler {
                     hostConn.send(JSON.stringify(startStreamingRequest));
 
                 } else {
-                    this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online");
+                    this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online 1");
                 }
                 return new Promise((resolve) => { resolve(false); });
             } else { //read from sqldatabase
@@ -187,7 +187,7 @@ class PlayHandler implements CommandHandler {
                     let hostConn = Context.getNamedWebSocket(`HOST:${rtsp.hostId}`);
                     if (hostConn) {
                         if (hostConn.readyState !== WebSocket.OPEN) {
-                            this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online");
+                            this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online 2");
                         }
                         let startStreamingRequest = this.getStartStreamingRequest2(command, streamChannelId, rtsp);
                         logger.debug(`send message:${JSON.stringify(startStreamingRequest)}`);
@@ -197,13 +197,13 @@ class PlayHandler implements CommandHandler {
                         connection.send(JSON.stringify(response));
 
                     } else {
-                        this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online");
+                        this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online 3");
                     }
                     return new Promise((resolve) => { resolve(false); });
                 } catch (e) {
                     logger.error(`fail to get rtsp info e:${e}`)
                     //close player connection
-                    this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online");
+                    this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online 4");
                     return new Promise((resolve) => { resolve(false); });
                 }
             }

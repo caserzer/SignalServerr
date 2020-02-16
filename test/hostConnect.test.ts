@@ -7,7 +7,7 @@ import { CommandChain } from '../src/handler/ICommandHandler';
 import { HostConnectHandler } from '../src/handler/HostConnectHandler';
 
 describe('HostConnect Command E2E Test', function () {
-    const testServer = "ws://localhost:8080";
+    const testServer = "ws://localhost:8085";
 
     const app = express();
 
@@ -20,7 +20,7 @@ describe('HostConnect Command E2E Test', function () {
         const commandChain = new CommandChain(wss);
         commandChain.AddHandler(new HostConnectHandler());
         //start server
-        server.listen(8080, () => {
+        server.listen(8085, () => {
             console.log("server start");
             done();
         });
