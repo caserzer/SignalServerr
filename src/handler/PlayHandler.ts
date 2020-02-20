@@ -8,7 +8,8 @@ import { Guid } from "guid-typescript";
 import logger from "../util/logger";
 import mysql from "mysql";
 import fs from "fs";
-import {MYSQL_HOST,MYSQL_USER,MYSQL_PASSWORD,MYSQL_DATABASE,MYSQL_PORT,MYSQL_CERTFILE,TURN_SERVER,TURN_USER,TURN_PASSWORD} from "../util/secrets"
+import { MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE, MYSQL_PORT, MYSQL_CERTFILE, STUN_SERVERS, TURN_SERVERS } from "../util/secrets"
+import { TurnServer } from "../models/TurnServer";
 
 
 enum EncodingType {
@@ -59,6 +60,8 @@ class PlayResponse extends CommandResponse {
 
 }
 
+
+
 @JsonObject("startStreamingReq")
 class StartStreamingRequest extends CommandRequest {
 
@@ -86,14 +89,11 @@ class StartStreamingRequest extends CommandRequest {
     @JsonProperty("duration", Number)
     duration: number = 60;
 
-    @JsonProperty("turnServer", String)
-    turnServer: string = "";
+    @JsonProperty("stunServers", [String])
+    stunServers: string[] = [];
 
-    @JsonProperty("turnUser", String)
-    turnUser: string = "";
-
-    @JsonProperty("turnPassword", String)
-    turnPassword: string = "";
+    @JsonProperty("turnServers", [TurnServer])
+    turnServers: TurnServer[] = [];
 
     @JsonProperty("streamChannel", String)
     streamChannel: string = "";
@@ -103,6 +103,8 @@ class StartStreamingRequest extends CommandRequest {
         this.command = "startStreamingReq";
     }
 }
+
+
 
 @JsonObject("startStreamingRsp")
 class StartStreamingResponse extends CommandResponse {
@@ -187,7 +189,7 @@ class PlayHandler implements CommandHandler {
                     let hostConn = Context.getNamedWebSocket(`HOST:${rtsp.hostId}`);
                     if (hostConn) {
                         if (hostConn.readyState !== WebSocket.OPEN) {
-                            this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online");
+                            this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online ");
                         }
                         let startStreamingRequest = this.getStartStreamingRequest2(command, streamChannelId, rtsp);
                         logger.debug(`send message:${JSON.stringify(startStreamingRequest)}`);
@@ -267,9 +269,9 @@ class PlayHandler implements CommandHandler {
         request.userName = "dummyUser";
         request.password = "dummyPassword";
         request.rtspEncoding = EncodingType.H264;
-        request.turnServer = "turn://";
-        request.turnUser = "turnUser";
-        request.turnPassword = "turnPassword";
+        // request.turnServer = "turn://";
+        // request.turnUser = "turnUser";
+        // request.turnPassword = "turnPassword";
 
         return request;
     }
@@ -301,9 +303,8 @@ class PlayHandler implements CommandHandler {
                 request.rtspEncoding = EncodingType.H264;
         }
         request.ip = rtsp.ip;
-        request.turnServer = TURN_SERVER!;
-        request.turnUser = TURN_USER!;
-        request.turnPassword = TURN_PASSWORD!;
+        request.stunServers = STUN_SERVERS;
+        request.turnServers = TURN_SERVERS;
 
         return request;
     }
