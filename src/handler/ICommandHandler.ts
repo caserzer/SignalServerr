@@ -63,7 +63,7 @@ class CommandChain {
         }
     }
 
-    // private interval: NodeJS.Timeout;
+    private interval: NodeJS.Timeout;
     constructor(server: WebSocket.Server) {
 
         Context.setServer(server);
@@ -83,34 +83,33 @@ class CommandChain {
             });
 
             ws.on("pong", () => {
-                // let context = Context.getContext(ws);
-                // if (context) {
-                //     logger.debug(`received pong on context name:${context.getName()}`)
-                // } else {
-                //     logger.debug('recevied pong.')
-                // }
+                let context = Context.getContext(ws);
+                if (context) {
+                    context.Alive = true;
+                } 
             });
 
-            ws.on("ping", () => {
-                // let context = Context.getContext(ws);
-                // if (context) {
-                //     logger.debug(`received ping on context name:${context.getName()}`)
-                // } else {
-                //     logger.debug('recevied ping.')
-                // }
-            });
         });
 
-        // this.interval = setInterval(function ping() {
-        //     server.clients.forEach(function each(ws) {
-        //         try {
-        //             ws.ping();
-        //         } catch (e) {
-        //             logger.error('error when ping', e);
-        //         }
+        this.interval = setInterval(function ping() {
+            server.clients.forEach(function each(ws) {
+                try {
+                    let context = Context.getContext(ws);
+                    if(context){
+                        if(context.Alive === false) {
+                            ws.terminate();// 
+                            logger.info(`broken connection terminated. context name:${context.getName()}`)
+                        }
+                        context.Alive = false;
+                        ws.ping();
+                    }
+                    
+                } catch (e) {
+                    logger.error('error when ping', e);
+                }
 
-        //     });
-        // }, 15000);
+            });
+        }, 15000);
     }
 
     private HandleConnectionOpen(conn: WebSocket): void {
