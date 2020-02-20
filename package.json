@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/caserzer/SignalServerr#readme",
   "dependencies": {
+    "crypto-js": "^4.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "guid-typescript": "^1.0.9",
@@ -27,9 +28,10 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
-    "@types/mysql": "^2.15.8",
+    "@types/crypto-js": "^3.1.43",
     "@types/express": "^4.17.2",
     "@types/jest": "^24.0.25",
+    "@types/mysql": "^2.15.8",
     "@types/node": "^13.1.6",
     "@types/weak-napi": "^1.0.0",
     "@types/ws": "^6.0.4",

@@ -2,6 +2,7 @@ import express from 'express';
 import * as http from 'http';
 import * as WebSocket from 'ws';
 import * as statisticController from './controller/StatisticController';
+import * as serverController from './controller/ServersController';
 import { HostConnectHandler } from './handler/HostConnectHandler';
 import { CommandChain } from './handler/ICommandHandler';
 import { PlayHandler, StartStreamingHandler } from './handler/PlayHandler';
@@ -28,7 +29,9 @@ commandChain.AddHandler(new StreamHandler());
 commandChain.AddHandler(new SDPHandler());
 commandChain.AddHandler(new UnRecognizedCommandHandler());
 
-app.get('/statistic/conns', statisticController.getConnections)
+//set router
+app.get('/statistic/conns', statisticController.getConnections);
+app.get('/servers', serverController.getServers);
 
 //start our server
 server.listen(Number.parseInt(appPort!), () => {

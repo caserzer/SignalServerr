@@ -42,10 +42,11 @@ export const APP_PORT = process.env["APP_PORT"];
 export const MYSQL_CERTFILE = process.env["MYSQL_CERTFILE"];
 export const STUN_SERVERS = stunServers;
 export const TURN_SERVERS = turnServers;
+export const PASSPHRASE = process.env["PASSPHRASE"];
 
 if (!MYSQL_HOST || !MYSQL_USER ||
     !MYSQL_PASSWORD || !MYSQL_DATABASE || !MYSQL_PORT || !APP_PORT ||
-    !MYSQL_CERTFILE
+    !MYSQL_CERTFILE || ! PASSPHRASE
 ) {
     logger.error("insufficient configuration provided");
     process.exit(1);
