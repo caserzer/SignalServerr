@@ -189,11 +189,7 @@ class PlayHandler implements CommandHandler {
                     let hostConn = Context.getNamedWebSocket(`HOST:${rtsp.hostId}`);
                     if (hostConn) {
                         if (hostConn.readyState !== WebSocket.OPEN) {
-<<<<<<< HEAD
                             this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online ");
-=======
-                            this.sendFailResponseAndCloseConnection(connection, command, "invalid ipc id or gateway is not online 2");
->>>>>>> 8948c16918df326f3ea0792901c1115aa234f27e
                         }
                         let startStreamingRequest = this.getStartStreamingRequest2(command, streamChannelId, rtsp);
                         logger.debug(`send message:${JSON.stringify(startStreamingRequest)}`);
