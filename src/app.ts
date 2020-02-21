@@ -29,6 +29,13 @@ commandChain.AddHandler(new StreamHandler());
 commandChain.AddHandler(new SDPHandler());
 commandChain.AddHandler(new UnRecognizedCommandHandler());
 
+//set CORNS
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*"); 
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 //set router
 app.get('/statistic/conns', statisticController.getConnections);
 app.get('/servers', serverController.getServers);
