@@ -11,7 +11,8 @@ var fileRotateTransport = new DailyRotateFile({
     maxSize: '20m',
     maxFiles: '100',
     utc: true,
-    dirname: './logs'
+    dirname: './logs',
+    level:"debug"
   });
 
 const options: winston.LoggerOptions = {
