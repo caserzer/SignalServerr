@@ -1,7 +1,19 @@
 import * as winston from "winston";
+import DailyRotateFile from "winston-daily-rotate-file"
 /**
  * //TODO: change logger configuration to configuration file
  */
+
+var fileRotateTransport = new DailyRotateFile({
+    filename: 'application-%DATE%.log',
+    datePattern: 'YYYY-MM-DD',
+    zippedArchive: true,
+    maxSize: '20m',
+    maxFiles: '100',
+    utc: true,
+    dirname: './logs'
+  });
+
 const options: winston.LoggerOptions = {
     format: winston.format.combine(
         winston.format.timestamp(),
@@ -13,7 +25,7 @@ const options: winston.LoggerOptions = {
         new winston.transports.Console({
             level: process.env.NODE_ENV === "production" ? "error" : "debug"
         }),
-        new winston.transports.File({ filename: "debug.log", level: "debug" })
+        fileRotateTransport
     ]
 };
 
